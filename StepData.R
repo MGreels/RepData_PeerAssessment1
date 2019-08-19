@@ -12,12 +12,20 @@ IntAves <- aggregate(RawDat$steps,
                      mean, 
                      na.rm = TRUE)
 
-locs <- is.na(RawDat[,1])
 
-ImpData[,] <-   if (is.na(RawDat[,])){
-        
-}
-        else{
-                
+#Loop to Impute data with NAs
+ImpDat<- RawDat
+for (i in 1:length(RawDat$steps)){
+        if (is.na(ImpDat[i,1])){
+                ImpDat[i,1] <- IntAves$x[
+                        which(IntAves$Interval == round(ImpDat[i,3]))] 
         }
-                                                        }
+}
+
+ImpDA <- aggregate(ImpDat$steps, 
+                     list(Day = ImpDat$date), 
+                     sum)
+
+ImpIA <- aggregate(ImpDat$steps, 
+                     list(Interval = ImpDat$interval), 
+                     mean)
