@@ -2,7 +2,7 @@
 title: "Reproducible Research Assignment 1"
 author: "MGreels"
 date: "8/19/2019"
-output: html_document
+output: md_document
 ---
 
 ```{r setup, include=FALSE}

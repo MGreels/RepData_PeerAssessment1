@@ -5,7 +5,7 @@ ImpIAWE <- aggregate(ImpDat$steps,
                           weekend = is.weekend(as.Date(ImpDat$date))), 
                      mean)
 
-ImpIAWE$WE <- factor(ImpIAWE$weekend, labels = c("Weekend", "Weekday"))
+ImpIAWE$WE <- factor(ImpIAWE$weekend, labels = c("Weekday", "Weekend"))
 
 WEplot <- ggplot(data=ImpIAWE, aes(x = Interval, y = x)) +
         geom_bar(stat = "identity") +
