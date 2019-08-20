@@ -29,3 +29,7 @@ ImpDA <- aggregate(ImpDat$steps,
 ImpIA <- aggregate(ImpDat$steps, 
                      list(Interval = ImpDat$interval), 
                      mean)
+
+ImpIAWE <- aggregate(ImpDat$steps, list(Interval = ImpDat$interval, 
+                        weekend = is.weekend(as.Date(ImpDat$date))), 
+                   mean)
