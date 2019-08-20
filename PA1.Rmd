@@ -1,0 +1,121 @@
+---
+title: "Reproducible Research Assignment 1"
+author: "MGreels"
+date: "8/19/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Reproducible Research - Programming Assignment #1
+
+## Loading and Preprocessing the Data into R
+
+We start by downloading the dataset and saving to an R dataframe.  
+
+The raw dataframe is also reconfigured into two aggregate datasets, one taking a daily total step count sum for all the days in the study and the second computing an average for each 5 minute interval across the study set.
+
+```{r load, echo=TRUE}
+RawDat <- read.csv("activity/activity.csv")
+
+
+DayAves <- aggregate(RawDat$steps, 
+                     list(Day = RawDat$date), 
+                     sum,
+                     na.rm = TRUE)
+
+IntAves <- aggregate(RawDat$steps, 
+                     list(Interval = RawDat$interval), 
+                     mean, 
+                     na.rm = TRUE)
+```
+
+## What is the Mean total Number of Steps taken per Day?
+
+```{r Mean total Steps}
+dailymean <- mean(DayAves$x)
+dailymed <- median(DayAves$x)
+
+library(ggplot2)
+
+histo <- ggplot(data=subset(DayAves, !is.na(x)), aes(x)) + 
+        geom_histogram(bins=10)
+
+histo
+
+```
+
+The mean total daily steps recorded was `r dailymean` and teh median total daily steps recorded was `r dailymed`
+
+## What is the Average Daily Activity Pattern?
+
+```{r Daily Timestamp Averages}
+library(ggplot2)
+
+maxint  <- IntAves$Interval[which.max(IntAves$x)]
+
+barplot <- ggplot(data=IntAves, aes(x = Interval, y = x)) +
+                geom_bar(stat = "identity")
+
+barplot
+```
+
+The maximum steps occur daily during interval number `r maxint`.
+
+## Impute Missing Values
+
+Code Below will create a new dataset "ImpDat" with imputed data to replace NAs.  In the case of an NA, the code inserts the associated 5 minute interval average.
+
+Code then reruns Daily and per interval averages for the two dataframes created above.
+
+```{r Impute Missing Values}
+ImpDat<- RawDat
+for (i in 1:length(RawDat$steps)){
+        if (is.na(ImpDat[i,1])){
+                ImpDat[i,1] <- IntAves$x[
+                        which(IntAves$Interval == round(ImpDat[i,3]))] 
+        }
+}
+
+ImpDA <- aggregate(ImpDat$steps, 
+                     list(Day = ImpDat$date), 
+                     sum)
+
+ImpIA <- aggregate(ImpDat$steps, 
+                     list(Interval = ImpDat$interval), 
+                     mean)
+
+impmean <- mean(ImpDA$x)
+impmed <- median(ImpDA$x)
+
+imphist <- ggplot(data=subset(ImpDA, !is.na(x)), aes(x)) + 
+        geom_histogram(bins=10)
+
+imphist
+
+
+```
+
+WIth missing data imputed the new daily mean step count is `r impmean` and the new daily median step count is `r impmed`
+
+
+## Are there differences in activity patterns between weekdays and weekends?
+
+```{r Weekend v. Weekday Analysis}
+library(chron)
+
+ImpIAWE <- aggregate(ImpDat$steps, 
+                     list(Interval = ImpDat$interval, 
+                          weekend = is.weekend(as.Date(ImpDat$date))), 
+                     mean)
+
+ImpIAWE$WE <- factor(ImpIAWE$weekend, labels = c("Weekday", "Weekend"))
+
+WEplot <- ggplot(data=ImpIAWE, aes(x = Interval, y = x)) +
+        geom_bar(stat = "identity") +
+        facet_grid(WE~.,)
+
+WEplot
+```

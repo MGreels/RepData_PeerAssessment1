@@ -5,7 +5,8 @@ RawDat <- read.csv("activity/activity.csv")
 
 DayAves <- aggregate(RawDat$steps, 
                      list(Day = RawDat$date), 
-                     sum)
+                     sum,
+                     na.rm = TRUE)
 
 IntAves <- aggregate(RawDat$steps, 
                      list(Interval = RawDat$interval), 
