@@ -34,7 +34,7 @@ What is the Mean total Number of Steps taken per Day?
     histo <- ggplot(data=subset(DayAves, !is.na(x)), aes(x)) + 
             geom_histogram(bins=10)
 
-    histo
+    print(histo)
 
 ![](PA1_files/figure-markdown_strict/Mean%20total%20Steps-1.png)
 

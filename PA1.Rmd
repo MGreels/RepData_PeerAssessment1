@@ -43,7 +43,7 @@ library(ggplot2)
 histo <- ggplot(data=subset(DayAves, !is.na(x)), aes(x)) + 
         geom_histogram(bins=10)
 
-histo
+print(histo)
 
 ```
 
